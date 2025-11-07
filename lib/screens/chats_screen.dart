@@ -4,6 +4,7 @@ import '../models/swap.dart';
 import '../services/database_service.dart';
 import '../providers/auth_provider.dart';
 import 'chat_detail_screen.dart';
+import 'sample_chat_screen.dart';
 
 class ChatsScreen extends StatelessWidget {
   final DatabaseService _databaseService = DatabaseService();
@@ -15,7 +16,20 @@ class ChatsScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
     
     return Scaffold(
-      appBar: AppBar(title: Text('Chats')),
+      appBar: AppBar(
+        title: Text('Chats'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.preview),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => SampleChatScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: StreamBuilder<List<Swap>>(
         stream: _databaseService.getUserSwaps(authProvider.user?.id ?? ''),
         builder: (context, sentSnapshot) {

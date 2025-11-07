@@ -1,36 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'dart:io';
 import '../models/book.dart';
 import '../models/swap.dart';
 import '../models/message.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Books
-  Future<String> addBook(Book book, File? imageFile) async {
-    String imageUrl = '';
-    
-    if (imageFile != null) {
-      String fileName = 'books/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      TaskSnapshot snapshot = await _storage.ref(fileName).putFile(imageFile);
-      imageUrl = await snapshot.ref.getDownloadURL();
-    }
-    
-    Book bookWithImage = Book(
-      id: book.id,
-      title: book.title,
-      author: book.author,
-      condition: book.condition,
-      imageUrl: imageUrl,
-      ownerId: book.ownerId,
-      ownerName: book.ownerName,
-      createdAt: book.createdAt,
-    );
-    
-    DocumentReference ref = await _firestore.collection('books').add(bookWithImage.toMap());
+  Future<String> addBook(Book book) async {
+    DocumentReference ref = await _firestore.collection('books').add(book.toMap());
     return ref.id;
   }
 
@@ -93,7 +71,7 @@ class DatabaseService {
   Stream<List<Message>> getMessages(String chatId) {
     return _firestore.collection('messages')
         .where('chatId', isEqualTo: chatId)
-        .orderBy('timestamp')
+        .orderBy('timestamp', descending: false)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) => Message.fromMap(doc.data(), doc.id)).toList();

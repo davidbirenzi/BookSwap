@@ -46,6 +46,9 @@ class AppTheme {
         titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         titleMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: Colors.black,
+      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: darkNavy,
         selectedItemColor: warmYellow,

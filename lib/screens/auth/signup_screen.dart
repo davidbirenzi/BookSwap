@@ -33,20 +33,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: 32),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  prefixIcon: Icon(Icons.person, color: Colors.grey[600]),
+                ),
+                textInputAction: TextInputAction.next,
                 validator: (value) => value?.isEmpty ?? true ? 'Enter name' : null,
               ),
               SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
+                ),
+                textInputAction: TextInputAction.next,
                 validator: (value) => value?.isEmpty ?? true ? 'Enter email' : null,
               ),
               SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                style: TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
+                ),
                 obscureText: true,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      await context.read<AuthProvider>().signUp(_emailController.text, _passwordController.text, _nameController.text);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Verification email sent! Please check your email.')),
+                      );
+                      Navigator.pop(context);
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  }
+                },
                 validator: (value) => (value?.length ?? 0) < 6 ? 'Password must be 6+ characters' : null,
               ),
               SizedBox(height: 24),

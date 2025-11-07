@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../models/book.dart';
 
 class BookCard extends StatelessWidget {
@@ -12,6 +13,31 @@ class BookCard extends StatelessWidget {
     this.onTap,
     this.actionButton,
   });
+
+  Widget _buildImage(String imageUrl) {
+    try {
+      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
+        final base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
+        return Image.memory(
+          base64Decode(base64String),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(Icons.book, size: 30, color: Colors.grey[600]);
+          },
+        );
+      } else {
+        return Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(Icons.book, size: 30, color: Colors.grey[600]);
+          },
+        );
+      }
+    } catch (e) {
+      return Icon(Icons.book, size: 30, color: Colors.grey[600]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +59,7 @@ class BookCard extends StatelessWidget {
                 child: book.imageUrl.isNotEmpty
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.network(book.imageUrl, fit: BoxFit.cover),
+                        child: _buildImage(book.imageUrl),
                       )
                     : Icon(Icons.book, size: 30, color: Colors.grey[600]),
               ),

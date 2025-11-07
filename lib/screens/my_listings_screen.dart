@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/book.dart';
+import '../models/swap.dart';
 import '../services/database_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/book_card.dart';
 import 'add_book_screen.dart';
 
-class MyListingsScreen extends StatelessWidget {
+class MyListingsScreen extends StatefulWidget {
+  const MyListingsScreen({super.key});
+
+  @override
+  _MyListingsScreenState createState() => _MyListingsScreenState();
+}
+
+class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final DatabaseService _databaseService = DatabaseService();
 
-  MyListingsScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Books'),
+        title: Text('My Listings'),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
@@ -26,58 +37,201 @@ class MyListingsScreen extends StatelessWidget {
             },
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Color(0xFFF5C841),
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          tabs: [
+            Tab(text: 'My Books'),
+            Tab(text: 'My Offers'),
+            Tab(text: 'Incoming'),
+          ],
+        ),
       ),
-      body: StreamBuilder<List<Book>>(
-        stream: _databaseService.getUserBooks(authProvider.user?.id ?? ''),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildMyBooksTab(),
+          _buildMyOffersTab(),
+          _buildIncomingTab(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMyBooksTab() {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    return StreamBuilder<List<Book>>(
+      stream: _databaseService.getUserBooks(authProvider.user?.id ?? ''),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('No books listed yet', style: TextStyle(color: Colors.white, fontSize: 18)),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => AddBookScreen()));
+                  },
+                  child: Text('Add Your First Book'),
+                ),
+              ],
+            ),
+          );
+        }
+        
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            Book book = snapshot.data![index];
+            return BookCard(
+              book: book,
+              actionButton: Row(
                 children: [
-                  Text('No books listed yet', style: TextStyle(color: Colors.white, fontSize: 18)),
-                  SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => AddBookScreen()));
-                    },
-                    child: Text('Add Your First Book'),
+                    onPressed: () => _editBook(context, book),
+                    child: Text('Edit'),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () => _deleteBook(context, book.id),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    child: Text('Delete', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
             );
-          }
-          
-          return ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              Book book = snapshot.data![index];
-              return BookCard(
-                book: book,
-                actionButton: Row(
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMyOffersTab() {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    return StreamBuilder<List<Swap>>(
+      stream: _databaseService.getUserSwaps(authProvider.user?.id ?? ''),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text('No offers sent yet', style: TextStyle(color: Colors.white, fontSize: 18)),
+          );
+        }
+        
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            Swap swap = snapshot.data![index];
+            return Card(
+              margin: EdgeInsets.only(bottom: 16),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _editBook(context, book),
-                      child: Text('Edit'),
-                    ),
-                    SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () => _deleteBook(context, book.id),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: Text('Delete', style: TextStyle(color: Colors.white)),
-                    ),
+                    Text('Book: ${swap.bookTitle}', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('To: ${swap.receiverName}'),
+                    Text('Status: ${swap.status.name}', 
+                      style: TextStyle(color: _getStatusColor(swap.status))),
                   ],
                 ),
-              );
-            },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildIncomingTab() {
+    final authProvider = Provider.of<AuthProvider>(context);
+    
+    return StreamBuilder<List<Swap>>(
+      stream: _databaseService.getReceivedSwaps(authProvider.user?.id ?? ''),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text('No incoming offers', style: TextStyle(color: Colors.white, fontSize: 18)),
           );
-        },
-      ),
+        }
+        
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            Swap swap = snapshot.data![index];
+            return Card(
+              margin: EdgeInsets.only(bottom: 16),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Book: ${swap.bookTitle}', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('From: ${swap.senderName}'),
+                    Text('Status: ${swap.status.name}', 
+                      style: TextStyle(color: _getStatusColor(swap.status))),
+                    if (swap.status == SwapStatus.Pending) ...[
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.Accepted),
+                            child: Text('Accept'),
+                          ),
+                          SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.Rejected),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                            child: Text('Reject', style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Color _getStatusColor(SwapStatus status) {
+    switch (status) {
+      case SwapStatus.Pending:
+        return Colors.orange;
+      case SwapStatus.Accepted:
+        return Colors.green;
+      case SwapStatus.Rejected:
+        return Colors.red;
+    }
+  }
+
+  void _updateSwapStatus(String swapId, SwapStatus status) async {
+    await _databaseService.updateSwapStatus(swapId, status);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Swap ${status.name.toLowerCase()}')),
     );
   }
 
