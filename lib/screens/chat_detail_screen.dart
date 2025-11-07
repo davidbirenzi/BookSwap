@@ -94,42 +94,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            color: Color(0xFFF5C841),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Book: ${widget.swap.bookTitle}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-                      Text('Status: ${widget.swap.status.name}', style: TextStyle(color: Colors.black54)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF0E0E2C), Color(0xFF1A1A3A)],
-                ),
-              ),
+              color: Colors.white,
               child: StreamBuilder<List<Message>>(
                 stream: _databaseService.getMessages(widget.swap.id),
                 builder: (context, snapshot) {
-                  print('Chat ID: ${widget.swap.id}');
-                  print('Connection State: ${snapshot.connectionState}');
-                  print('Has Error: ${snapshot.hasError}');
                   if (snapshot.hasError) {
-                    print('Error: ${snapshot.error}');
+                    return Center(
+                      child: Text('Error loading messages', 
+                        style: TextStyle(color: Colors.red)),
+                    );
                   }
-                  print('Messages Count: ${snapshot.data?.length ?? 0}');
                   
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(color: Color(0xFFF5C841)));
@@ -142,12 +118,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.chat_bubble_outline, size: 64, color: Colors.white30),
+                          Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey[400]),
                           SizedBox(height: 16),
                           Text('Start your conversation', 
-                            style: TextStyle(color: Colors.white54, fontSize: 18)),
+                            style: TextStyle(color: Colors.grey[600], fontSize: 18)),
                           Text('Say hello to ${isSender ? widget.swap.receiverName : widget.swap.senderName}!', 
-                            style: TextStyle(color: Colors.white30, fontSize: 14)),
+                            style: TextStyle(color: Colors.grey[500], fontSize: 14)),
                         ],
                       ),
                     );
@@ -169,47 +145,62 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           left: isMe ? 50 : 0,
                           right: isMe ? 0 : 50,
                         ),
-                        child: Align(
-                          alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: isMe ? Color(0xFFF5C841) : Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                                bottomLeft: Radius.circular(isMe ? 20 : 4),
-                                bottomRight: Radius.circular(isMe ? 4 : 20),
+                        child: Row(
+                          mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (!isMe)
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: Color(0xFFF5C841),
+                                child: Text(
+                                  message.senderName[0].toUpperCase(),
+                                  style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  message.text,
-                                  style: TextStyle(
-                                    color: isMe ? Colors.black : Colors.black87,
-                                    fontSize: 16,
+                            if (!isMe) SizedBox(width: 8),
+                            Flexible(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: isMe ? Color(0xFFF5C841) : Color(0xFF0E0E2C),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                    bottomLeft: Radius.circular(isMe ? 20 : 4),
+                                    bottomRight: Radius.circular(isMe ? 4 : 20),
                                   ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: isMe ? Colors.black54 : Colors.grey[600],
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      message.text,
+                                      style: TextStyle(
+                                        color: isMe ? Color(0xFF0E0E2C) : Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: isMe ? Color(0xFF0E0E2C).withOpacity(0.7) : Colors.white70,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     },
@@ -230,56 +221,56 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
                     child: TextField(
                       controller: _messageController,
                       style: TextStyle(color: Colors.black, fontSize: 16),
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) {
-                        _sendMessage();
-                      },
+                      onSubmitted: (_) => _sendMessage(),
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         hintStyle: TextStyle(color: Colors.grey[500]),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF5C841),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFFF5C841).withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
+                  SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: _sendMessage,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF5C841),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ],
+                      child: Text(
+                        'Send',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: IconButton(
-                    icon: Icon(Icons.send, color: Colors.black),
-                    onPressed: _sendMessage,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -288,16 +279,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void _sendMessage() async {
-    if (_messageController.text.trim().isEmpty) return;
+    String messageText = _messageController.text.trim();
+    if (messageText.isEmpty) return;
     
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.user == null) return;
     
-    String messageText = _messageController.text.trim();
+    // Clear input immediately for better UX
+    _messageController.clear();
     
     try {
       Message message = Message(
-        id: _uuid.v4(),
+        id: '', // Will be set by Firestore
         chatId: widget.swap.id,
         senderId: authProvider.user!.id,
         senderName: authProvider.user!.name,
@@ -305,13 +298,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         timestamp: DateTime.now(),
       );
       
-      print('Sending message with chatId: ${widget.swap.id}');
-      print('Message: ${message.toMap()}');
-      
       await _databaseService.sendMessage(message);
-      _messageController.clear(); // Clear only after successful send
+      
+      // Scroll to bottom after sending
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
     } catch (e) {
-      print('Send message error: $e');
+      // Restore message text if sending failed
+      _messageController.text = messageText;
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

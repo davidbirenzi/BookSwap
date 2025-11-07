@@ -11,26 +11,36 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _notificationsEnabled = true;
+  bool _notificationReminders = true;
+  bool _emailUpdates = true;
 
   @override
   void initState() {
     super.initState();
-    _loadNotificationPreference();
+    _loadPreferences();
   }
 
-  void _loadNotificationPreference() async {
+  void _loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
+      _notificationReminders = prefs.getBool('notification_reminders') ?? true;
+      _emailUpdates = prefs.getBool('email_updates') ?? true;
     });
   }
 
-  void _saveNotificationPreference(bool value) async {
+  void _saveNotificationReminders(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('notifications_enabled', value);
+    await prefs.setBool('notification_reminders', value);
     setState(() {
-      _notificationsEnabled = value;
+      _notificationReminders = value;
+    });
+  }
+
+  void _saveEmailUpdates(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('email_updates', value);
+    setState(() {
+      _emailUpdates = value;
     });
   }
 
@@ -45,18 +55,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Profile Information', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-                    SizedBox(height: 12),
-                    Text('Name: ${authProvider.user?.name ?? 'N/A'}', style: TextStyle(color: Colors.black)),
-                    Text('Email: ${authProvider.user?.email ?? 'N/A'}', style: TextStyle(color: Colors.black)),
-                    Text('Email Verified: ${authProvider.user?.emailVerified == true ? 'Yes' : 'No'}', style: TextStyle(color: Colors.black)),
-                  ],
+            Container(
+              width: double.infinity,
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Color(0xFFF5C841),
+                            child: Text(
+                              authProvider.user?.name?.substring(0, 1).toUpperCase() ?? 'U',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  authProvider.user?.name ?? 'User',
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  authProvider.user?.email ?? 'No email',
+                                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                                ),
+                                SizedBox(height: 4),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: authProvider.user?.emailVerified == true ? Colors.green : Colors.orange,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    authProvider.user?.emailVerified == true ? 'Verified' : 'Not Verified',
+                                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -67,13 +116,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Preferences', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                    Text('Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
                     SizedBox(height: 12),
-                    SwitchListTile(
-                      title: Text('Enable Notifications', style: TextStyle(color: Colors.black)),
-                      value: _notificationsEnabled,
-                      onChanged: _saveNotificationPreference,
-                      activeThumbColor: Colors.blue,
+                    _buildCustomSwitchTile(
+                      'Notification Reminders',
+                      _notificationReminders,
+                      _saveNotificationReminders,
+                    ),
+                    _buildCustomSwitchTile(
+                      'Email Updates',
+                      _emailUpdates,
+                      _saveEmailUpdates,
+                    ),
+                    ListTile(
+                      title: Text('About', style: TextStyle(color: Colors.black)),
+                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                      onTap: () => _showAboutDialog(context),
                     ),
                   ],
                 ),
@@ -105,6 +163,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCustomSwitchTile(String title, bool value, Function(bool) onChanged) {
+    return ListTile(
+      title: Text(title, style: TextStyle(color: Colors.black)),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: Color(0xFFF5C841),
+        activeTrackColor: Color(0xFF0E0E2C),
+        inactiveThumbColor: Colors.grey,
+        inactiveTrackColor: Colors.grey[300],
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('About BookSwap'),
+        content: Text('BookSwap v1.0\n\nA student textbook exchange platform that helps students buy, sell, and swap textbooks with ease.\n\nDeveloped with Flutter and Firebase.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
       ),
     );
   }

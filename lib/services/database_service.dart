@@ -64,17 +64,24 @@ class DatabaseService {
   }
 
   // Messages
-  Future<void> sendMessage(Message message) async {
-    await _firestore.collection('messages').add(message.toMap());
+  Future<String> sendMessage(Message message) async {
+    try {
+      DocumentReference ref = await _firestore.collection('messages').add(message.toMap());
+      return ref.id;
+    } catch (e) {
+      print('Error sending message: $e');
+      rethrow;
+    }
   }
 
   Stream<List<Message>> getMessages(String chatId) {
     return _firestore.collection('messages')
         .where('chatId', isEqualTo: chatId)
-        .orderBy('timestamp', descending: false)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => Message.fromMap(doc.data(), doc.id)).toList();
+      List<Message> messages = snapshot.docs.map((doc) => Message.fromMap(doc.data(), doc.id)).toList();
+      messages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      return messages;
     });
   }
 

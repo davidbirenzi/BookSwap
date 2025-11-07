@@ -48,7 +48,7 @@ class ChatsScreen extends StatelessWidget {
               
               if (allSwaps.isEmpty) {
                 return Center(
-                  child: Text('No chats yet', style: TextStyle(color: Colors.white, fontSize: 18)),
+                  child: Text('No chats yet', style: TextStyle(color: Colors.black, fontSize: 18)),
                 );
               }
               

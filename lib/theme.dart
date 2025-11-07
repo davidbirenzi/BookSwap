@@ -7,7 +7,7 @@ class AppTheme {
   static ThemeData get theme {
     return ThemeData(
       primarySwatch: Colors.blue,
-      scaffoldBackgroundColor: darkNavy,
+      scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
         backgroundColor: darkNavy,
         foregroundColor: Colors.white,
@@ -41,10 +41,10 @@ class AppTheme {
         ),
       ),
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: Colors.white),
-        bodyMedium: TextStyle(color: Colors.white),
-        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        titleMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        bodyLarge: TextStyle(color: Colors.black),
+        bodyMedium: TextStyle(color: Colors.black),
+        titleLarge: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        titleMedium: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: Colors.black,

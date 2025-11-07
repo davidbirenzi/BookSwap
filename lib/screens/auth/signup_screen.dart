@@ -18,6 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF0E0E2C),
       body: Padding(
         padding: EdgeInsets.all(24),
         child: Form(
@@ -29,13 +30,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(height: 60),
               Icon(Icons.menu_book, size: 60, color: Color(0xFFF5C841)),
               SizedBox(height: 16),
-              Text('Create Account', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 28)),
+              Text('Create Account', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
               SizedBox(height: 32),
               TextFormField(
                 controller: _nameController,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Name',
+                  hintText: 'Name',
                   prefixIcon: Icon(Icons.person, color: Colors.grey[600]),
                 ),
                 textInputAction: TextInputAction.next,
@@ -46,7 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _emailController,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  hintText: 'Email',
                   prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
                 ),
                 textInputAction: TextInputAction.next,
@@ -57,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _passwordController,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  hintText: 'Password',
                   prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
                 ),
                 obscureText: true,

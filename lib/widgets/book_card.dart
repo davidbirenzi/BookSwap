@@ -15,9 +15,13 @@ class BookCard extends StatelessWidget {
   });
 
   Widget _buildImage(String imageUrl) {
+    if (imageUrl.isEmpty) {
+      return Icon(Icons.book, size: 30, color: Colors.grey[600]);
+    }
+    
     try {
-      if (imageUrl.startsWith('data:') || !imageUrl.startsWith('http')) {
-        final base64String = imageUrl.contains(',') ? imageUrl.split(',')[1] : imageUrl;
+      if (imageUrl.startsWith('data:image/')) {
+        final base64String = imageUrl.split(',')[1];
         return Image.memory(
           base64Decode(base64String),
           fit: BoxFit.cover,
@@ -25,7 +29,7 @@ class BookCard extends StatelessWidget {
             return Icon(Icons.book, size: 30, color: Colors.grey[600]);
           },
         );
-      } else {
+      } else if (imageUrl.startsWith('http')) {
         return Image.network(
           imageUrl,
           fit: BoxFit.cover,
@@ -35,8 +39,10 @@ class BookCard extends StatelessWidget {
         );
       }
     } catch (e) {
-      return Icon(Icons.book, size: 30, color: Colors.grey[600]);
+      // Fallback to book icon on any error
     }
+    
+    return Icon(Icons.book, size: 30, color: Colors.grey[600]);
   }
 
   @override

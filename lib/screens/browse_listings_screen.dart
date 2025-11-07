@@ -25,10 +25,10 @@ class BrowseListingsScreen extends StatelessWidget {
           }
           
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No books available', style: TextStyle(color: Colors.white)));
+            return Center(child: Text('No books available', style: TextStyle(color: Colors.black)));
           }
           
-          List<Book> books = snapshot.data!.where((book) => book.ownerId != authProvider.user?.id).toList();
+          List<Book> books = snapshot.data!;
           
           return ListView.builder(
             padding: EdgeInsets.all(16),
@@ -37,10 +37,12 @@ class BrowseListingsScreen extends StatelessWidget {
               Book book = books[index];
               return BookCard(
                 book: book,
-                actionButton: ElevatedButton(
-                  onPressed: () => _initiateSwap(context, book, authProvider.user!),
-                  child: Text('Request Swap'),
-                ),
+                actionButton: book.ownerId == authProvider.user?.id
+                    ? null
+                    : ElevatedButton(
+                        onPressed: () => _initiateSwap(context, book, authProvider.user!),
+                        child: Text('Request Swap'),
+                      ),
               );
             },
           );

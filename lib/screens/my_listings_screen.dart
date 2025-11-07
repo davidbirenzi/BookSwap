@@ -75,7 +75,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('No books listed yet', style: TextStyle(color: Colors.white, fontSize: 18)),
+                Text('No books listed yet', style: TextStyle(color: Colors.black, fontSize: 18)),
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
@@ -128,7 +128,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
         
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
-            child: Text('No offers sent yet', style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('No offers sent yet', style: TextStyle(color: Colors.black, fontSize: 18)),
           );
         }
         
@@ -170,7 +170,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
         
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(
-            child: Text('No incoming offers', style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Text('No incoming offers', style: TextStyle(color: Colors.black, fontSize: 18)),
           );
         }
         

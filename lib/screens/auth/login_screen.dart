@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF0E0E2C),
       body: Padding(
         padding: EdgeInsets.all(24),
         child: Form(
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 80),
                 Icon(Icons.menu_book, size: 80, color: Color(0xFFF5C841)),
                 SizedBox(height: 24),
-                Text('BookSwap', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 32)),
+                Text('BookSwap', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Text('Swap Your Books With Other Students', 
                   style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    hintText: 'Email',
                     prefixIcon: Icon(Icons.email, color: Colors.grey[600]),
                   ),
                   textInputAction: TextInputAction.next,
@@ -55,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    hintText: 'Password',
                     prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
                   ),
                   obscureText: true,
