@@ -249,7 +249,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       controller: _messageController,
                       style: TextStyle(color: Colors.black, fontSize: 16),
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage(),
+                      onSubmitted: (_) {
+                        _sendMessage();
+                      },
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         hintStyle: TextStyle(color: Colors.grey[500]),
