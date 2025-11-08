@@ -1,6 +1,6 @@
 # BookSwap App
 
-Hllo! This is my book exchange app. Basically, you can list your old books and swap them with other students instead of buying expensive new ones.
+Hello! This is my book exchange app. Basically, you can list your old books and swap them with other students instead of buying expensive new ones.
 
 ## What it does
 
@@ -21,7 +21,7 @@ You'll need Flutter installed and a Firebase project set up. Here's the quick ve
 4. Update `lib/firebase_options.dart` with your config
 5. `flutter run`
 
-## Tech stuff
+## explanations
 
 - **Flutter** for the mobile app
 - **Firebase Auth** for login/signup
@@ -30,13 +30,7 @@ You'll need Flutter installed and a Firebase project set up. Here's the quick ve
 
 The app follows clean architecture - models, services, providers, and screens are all separated.
 
-## App flow
+<img width="3323" height="2392" alt="image" src="https://github.com/user-attachments/assets/84ac6bc1-1720-40b0-8101-a25a8e1b5ada" />
 
-1. Sign up → verify your email
-2. Add some books you want to trade
-3. Browse what others are offering
-4. Request a swap if you find something you need
-5. Chat with the owner to work out details
-6. Meet up and swap books!
 
-## Screenshots
+**Done by:** David Birenzi
