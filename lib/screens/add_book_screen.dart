@@ -8,8 +8,10 @@ import '../models/book.dart';
 import '../services/database_service.dart';
 import '../providers/auth_provider.dart';
 
+// Screen for adding new books or editing existing ones
+// Students use this to list their textbooks for swapping
 class AddBookScreen extends StatefulWidget {
-  final Book? book;
+  final Book? book; // if provided, we're editing; if null, we're adding new
   
   const AddBookScreen({super.key, this.book});
 
@@ -18,19 +20,20 @@ class AddBookScreen extends StatefulWidget {
 }
 
 class AddBookScreenState extends State<AddBookScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _authorController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // for form validation
+  final _titleController = TextEditingController(); // book title input
+  final _authorController = TextEditingController(); // author input
   final DatabaseService _databaseService = DatabaseService();
   
-  BookCondition _selectedCondition = BookCondition.good;
-  Uint8List? _imageBytes;
-  String? _base64Image;
-  bool _isLoading = false;
+  BookCondition _selectedCondition = BookCondition.good; // default condition
+  Uint8List? _imageBytes; // raw image data for preview
+  String? _base64Image; // base64 string to store in database
+  bool _isLoading = false; // tracks save operation
 
   @override
   void initState() {
     super.initState();
+    // If editing existing book, populate fields with current data
     if (widget.book != null) {
       _titleController.text = widget.book!.title;
       _authorController.text = widget.book!.author;
@@ -50,13 +53,14 @@ class AddBookScreenState extends State<AddBookScreen> {
           key: _formKey,
           child: Column(
             children: [
+              // Image picker section - tap to select book cover photo
               GestureDetector(
                 onTap: _pickImage,
                 child: Container(
                   height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: Colors.yellow, // yellow background matches app theme
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.grey),
                   ),
@@ -85,6 +89,7 @@ class AddBookScreenState extends State<AddBookScreen> {
                 ),
               ),
               SizedBox(height: 16),
+              // Book title input
               TextFormField(
                 controller: _titleController,
                 style: TextStyle(color: Colors.black),
@@ -92,6 +97,7 @@ class AddBookScreenState extends State<AddBookScreen> {
                 validator: (value) => value?.isEmpty ?? true ? 'Enter title' : null,
               ),
               SizedBox(height: 16),
+              // Author input
               TextFormField(
                 controller: _authorController,
                 style: TextStyle(color: Colors.black),
@@ -99,8 +105,10 @@ class AddBookScreenState extends State<AddBookScreen> {
                 validator: (value) => value?.isEmpty ?? true ? 'Enter author' : null,
               ),
               SizedBox(height: 16),
+              // Book condition selector
               Text('Condition', style: TextStyle(color: Colors.black, fontSize: 16)),
               SizedBox(height: 8),
+              // Create a selectable option for each condition
               ...BookCondition.values.map((condition) {
                 return GestureDetector(
                   onTap: () => setState(() => _selectedCondition = condition),
@@ -126,6 +134,7 @@ class AddBookScreenState extends State<AddBookScreen> {
                 );
               }),
               SizedBox(height: 24),
+              // Save button - shows spinner while saving
               _isLoading
                   ? CircularProgressIndicator()
                   : ElevatedButton(
@@ -139,6 +148,7 @@ class AddBookScreenState extends State<AddBookScreen> {
     );
   }
 
+  // Helper method to display existing book images
   Widget _buildPreviewImage(String imageUrl) {
     if (imageUrl.isEmpty) {
       return Icon(Icons.camera_alt, size: 50, color: Colors.black54);
@@ -177,19 +187,20 @@ class AddBookScreenState extends State<AddBookScreen> {
     }
   }
 
+  // Let user pick an image from their gallery
   Future<void> _pickImage() async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 600,
+        source: ImageSource.gallery, // only gallery, no camera
+        maxWidth: 600, // resize to reasonable size
         maxHeight: 800,
-        imageQuality: 80,
+        imageQuality: 80, // compress to save storage
       );
       
       if (image != null) {
         final bytes = await image.readAsBytes();
-        final base64String = base64Encode(bytes);
+        final base64String = base64Encode(bytes); // convert to base64 for storage
         
         setState(() {
           _imageBytes = bytes;
@@ -211,9 +222,11 @@ class AddBookScreenState extends State<AddBookScreen> {
     }
   }
 
+  // Save the book to the database
   Future<void> _saveBook(user) async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return; // check form validation
     
+    // Require image for new books
     if (_base64Image == null && widget.book == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please select an image for the book')),
@@ -224,10 +237,13 @@ class AddBookScreenState extends State<AddBookScreen> {
     setState(() => _isLoading = true);
     
     try {
+      // Determine which image to use
       String imageUrl = '';
       if (_base64Image != null && _base64Image!.isNotEmpty) {
+        // Use newly selected image
         imageUrl = 'data:image/jpeg;base64,$_base64Image';
       } else if (widget.book != null && widget.book!.imageUrl.isNotEmpty) {
+        // Keep existing image when editing
         imageUrl = widget.book!.imageUrl;
       }
       
@@ -242,6 +258,7 @@ class AddBookScreenState extends State<AddBookScreen> {
         createdAt: widget.book?.createdAt ?? DateTime.now(),
       );
       
+      // Save to database - add new or update existing
       if (widget.book == null) {
         await _databaseService.addBook(book);
       } else {

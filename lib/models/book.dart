@@ -1,14 +1,16 @@
+// Different conditions a textbook can be in
 enum BookCondition { newCondition, likeNew, good, used }
 
+// Book model - represents a textbook listing
 class Book {
-  final String id;
-  final String title;
-  final String author;
-  final BookCondition condition;
-  final String imageUrl;
-  final String ownerId;
-  final String ownerName;
-  final DateTime createdAt;
+  final String id; // unique book listing ID
+  final String title; // textbook title
+  final String author; // book author
+  final BookCondition condition; // physical condition of the book
+  final String imageUrl; // base64 encoded image or URL
+  final String ownerId; // ID of the student who owns this book
+  final String ownerName; // display name of the owner
+  final DateTime createdAt; // when this listing was created
 
   Book({
     required this.id,
@@ -21,12 +23,13 @@ class Book {
     required this.createdAt,
   });
 
+  // Create book object from Firestore data
   factory Book.fromMap(Map<String, dynamic> map, String id) {
     return Book(
       id: id,
       title: map['title'] ?? '',
       author: map['author'] ?? '',
-      condition: BookCondition.values[map['condition'] ?? 0],
+      condition: BookCondition.values[map['condition'] ?? 0], // convert index back to enum
       imageUrl: map['imageUrl'] ?? '',
       ownerId: map['ownerId'] ?? '',
       ownerName: map['ownerName'] ?? '',
@@ -34,15 +37,16 @@ class Book {
     );
   }
 
+  // Convert book object to map for Firestore storage
   Map<String, dynamic> toMap() {
     return {
       'title': title,
       'author': author,
-      'condition': condition.index,
+      'condition': condition.index, // store enum as index number
       'imageUrl': imageUrl,
       'ownerId': ownerId,
       'ownerName': ownerName,
-      'createdAt': createdAt.millisecondsSinceEpoch,
+      'createdAt': createdAt.millisecondsSinceEpoch, // store as timestamp
     };
   }
 }

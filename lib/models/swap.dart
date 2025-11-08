@@ -1,15 +1,17 @@
+// Status of a swap request between students
 enum SwapStatus { pending, accepted, rejected }
 
+// Swap model - represents a textbook exchange request
 class Swap {
-  final String id;
-  final String bookId;
-  final String bookTitle;
-  final String senderId;
-  final String senderName;
-  final String receiverId;
-  final String receiverName;
-  final SwapStatus status;
-  final DateTime createdAt;
+  final String id; // unique swap request ID
+  final String bookId; // ID of the book being requested
+  final String bookTitle; // title of the book (for easy display)
+  final String senderId; // ID of student making the request
+  final String senderName; // name of student making the request
+  final String receiverId; // ID of book owner
+  final String receiverName; // name of book owner
+  final SwapStatus status; // current status of the swap request
+  final DateTime createdAt; // when the swap request was made
 
   Swap({
     required this.id,
@@ -23,20 +25,22 @@ class Swap {
     required this.createdAt,
   });
 
+  // Create swap object from Firestore data
   factory Swap.fromMap(Map<String, dynamic> map, String id) {
     return Swap(
       id: id,
       bookId: map['bookId'] ?? '',
-      bookTitle: map['bookTitle'] ?? '',
+      bookTitle: map['bookTitle'] ?? '', // stored for convenience
       senderId: map['senderId'] ?? '',
       senderName: map['senderName'] ?? '',
       receiverId: map['receiverId'] ?? '',
       receiverName: map['receiverName'] ?? '',
-      status: SwapStatus.values[map['status'] ?? 0],
+      status: SwapStatus.values[map['status'] ?? 0], // convert index to enum
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] ?? 0),
     );
   }
 
+  // Convert swap object to map for Firestore storage
   Map<String, dynamic> toMap() {
     return {
       'bookId': bookId,
@@ -45,7 +49,7 @@ class Swap {
       'senderName': senderName,
       'receiverId': receiverId,
       'receiverName': receiverName,
-      'status': status.index,
+      'status': status.index, // store enum as index
       'createdAt': createdAt.millisecondsSinceEpoch,
     };
   }

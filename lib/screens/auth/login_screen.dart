@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'signup_screen.dart';
 
+// Login screen - where existing users sign in
+// First screen users see when opening the app
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,14 +13,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // for form validation
+  final _emailController = TextEditingController(); // email input
+  final _passwordController = TextEditingController(); // password input
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0E0E2C),
+      backgroundColor: Color(0xFF0E0E2C), // dark blue background
       body: Padding(
         padding: EdgeInsets.all(24),
         child: Form(
@@ -28,7 +30,8 @@ class LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: 80),
-                Icon(Icons.menu_book, size: 80, color: Color(0xFFF5C841)),
+                // App logo and branding
+                Icon(Icons.menu_book, size: 80, color: Color(0xFFF5C841)), // yellow book icon
                 SizedBox(height: 24),
                 Text('BookSwap', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
@@ -41,6 +44,7 @@ class LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(color: Colors.white54, fontSize: 14),
                 ),
                 SizedBox(height: 48),
+                // Email input field
                 TextFormField(
                   controller: _emailController,
                   style: TextStyle(color: Colors.black),
@@ -52,6 +56,7 @@ class LoginScreenState extends State<LoginScreen> {
                   validator: (value) => value?.isEmpty ?? true ? 'Enter email' : null,
                 ),
                 SizedBox(height: 16),
+                // Password input field
                 TextFormField(
                   controller: _passwordController,
                   style: TextStyle(color: Colors.black),
@@ -59,8 +64,9 @@ class LoginScreenState extends State<LoginScreen> {
                     hintText: 'Password',
                     prefixIcon: Icon(Icons.lock, color: Colors.grey[600]),
                   ),
-                  obscureText: true,
+                  obscureText: true, // hide password text
                   textInputAction: TextInputAction.done,
+                  // Allow signing in by pressing Enter
                   onFieldSubmitted: (_) async {
                     if (_formKey.currentState!.validate()) {
                       final messenger = ScaffoldMessenger.of(context);
@@ -79,10 +85,11 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 24),
                 SizedBox(height: 40),
+                // Sign in button - shows loading spinner when authenticating
                 Consumer<AuthProvider>(
                   builder: (context, auth, child) {
                     return auth.isLoading
-                        ? CircularProgressIndicator(color: Color(0xFFF5C841))
+                        ? CircularProgressIndicator(color: Color(0xFFF5C841)) // show spinner
                         : SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -105,6 +112,7 @@ class LoginScreenState extends State<LoginScreen> {
                           );
                   },
                 ),
+                // Link to sign up screen for new users
                 TextButton(
                   onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => SignUpScreen()));
