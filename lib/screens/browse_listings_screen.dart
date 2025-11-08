@@ -52,6 +52,7 @@ class BrowseListingsScreen extends StatelessWidget {
   }
 
   void _initiateSwap(BuildContext context, Book book, user) async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       Swap swap = Swap(
         id: '',
@@ -66,11 +67,11 @@ class BrowseListingsScreen extends StatelessWidget {
       );
       
       await _databaseService.createSwap(swap);
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Swap request sent!')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Error sending swap request')),
       );
     }

@@ -63,11 +63,12 @@ class LoginScreenState extends State<LoginScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) async {
                     if (_formKey.currentState!.validate()) {
+                      final messenger = ScaffoldMessenger.of(context);
                       try {
                         await context.read<AuthProvider>().signIn(_emailController.text, _passwordController.text);
                       } catch (e) {
                         if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          messenger.showSnackBar(
                             SnackBar(content: Text(e.toString())),
                           );
                         }
@@ -87,11 +88,12 @@ class LoginScreenState extends State<LoginScreen> {
                             child: ElevatedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
+                                  final messenger = ScaffoldMessenger.of(context);
                                   try {
                                     await auth.signIn(_emailController.text, _passwordController.text);
                                   } catch (e) {
                                     if (mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      messenger.showSnackBar(
                                         SnackBar(content: Text(e.toString())),
                                       );
                                     }

@@ -242,6 +242,7 @@ class MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPro
   }
 
   void _deleteBook(BuildContext context, String bookId) async {
+    final messenger = ScaffoldMessenger.of(context);
     bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -257,7 +258,7 @@ class MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPro
     if (confirm == true) {
       await _databaseService.deleteBook(bookId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(content: Text('Book deleted')),
         );
       }

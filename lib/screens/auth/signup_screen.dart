@@ -65,17 +65,19 @@ class SignUpScreenState extends State<SignUpScreen> {
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) async {
                   if (_formKey.currentState!.validate()) {
+                    final navigator = Navigator.of(context);
+                    final messenger = ScaffoldMessenger.of(context);
                     try {
                       await context.read<AuthProvider>().signUp(_emailController.text, _passwordController.text, _nameController.text);
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        messenger.showSnackBar(
                           SnackBar(content: Text('Verification email sent! Please check your email.')),
                         );
-                        Navigator.pop(context);
+                        navigator.pop();
                       }
                     } catch (e) {
                       if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        messenger.showSnackBar(
                           SnackBar(content: Text(e.toString())),
                         );
                       }
@@ -95,17 +97,19 @@ class SignUpScreenState extends State<SignUpScreen> {
                           child: ElevatedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
+                                final navigator = Navigator.of(context);
+                                final messenger = ScaffoldMessenger.of(context);
                                 try {
                                   await auth.signUp(_emailController.text, _passwordController.text, _nameController.text);
                                   if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    messenger.showSnackBar(
                                       SnackBar(content: Text('Verification email sent! Please check your email.')),
                                     );
-                                    Navigator.pop(context);
+                                    navigator.pop();
                                   }
                                 } catch (e) {
                                   if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    messenger.showSnackBar(
                                       SnackBar(content: Text(e.toString())),
                                     );
                                   }
