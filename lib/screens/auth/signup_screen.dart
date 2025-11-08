@@ -6,10 +6,10 @@ class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  SignUpScreenState createState() => SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -67,14 +67,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (_formKey.currentState!.validate()) {
                     try {
                       await context.read<AuthProvider>().signUp(_emailController.text, _passwordController.text, _nameController.text);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Verification email sent! Please check your email.')),
-                      );
-                      Navigator.pop(context);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Verification email sent! Please check your email.')),
+                        );
+                        Navigator.pop(context);
+                      }
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.toString())),
-                      );
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
                     }
                   }
                 },
@@ -93,14 +97,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (_formKey.currentState!.validate()) {
                                 try {
                                   await auth.signUp(_emailController.text, _passwordController.text, _nameController.text);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Verification email sent! Please check your email.')),
-                                  );
-                                  Navigator.pop(context);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Verification email sent! Please check your email.')),
+                                    );
+                                    Navigator.pop(context);
+                                  }
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(e.toString())),
-                                  );
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(e.toString())),
+                                    );
+                                  }
                                 }
                               }
                             },

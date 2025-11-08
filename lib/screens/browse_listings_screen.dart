@@ -61,7 +61,7 @@ class BrowseListingsScreen extends StatelessWidget {
         senderName: user.name,
         receiverId: book.ownerId,
         receiverName: book.ownerName,
-        status: SwapStatus.Pending,
+        status: SwapStatus.pending,
         createdAt: DateTime.now(),
       );
       

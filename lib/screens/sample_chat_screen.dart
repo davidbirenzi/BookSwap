@@ -4,10 +4,10 @@ class SampleChatScreen extends StatefulWidget {
   const SampleChatScreen({super.key});
 
   @override
-  _SampleChatScreenState createState() => _SampleChatScreenState();
+  SampleChatScreenState createState() => SampleChatScreenState();
 }
 
-class _SampleChatScreenState extends State<SampleChatScreen> {
+class SampleChatScreenState extends State<SampleChatScreen> {
   final _messageController = TextEditingController();
   
   final List<ChatMessage> _messages = [
@@ -83,7 +83,7 @@ class _SampleChatScreenState extends State<SampleChatScreen> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),

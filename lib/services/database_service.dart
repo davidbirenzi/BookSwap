@@ -69,7 +69,7 @@ class DatabaseService {
       DocumentReference ref = await _firestore.collection('messages').add(message.toMap());
       return ref.id;
     } catch (e) {
-      print('Error sending message: $e');
+
       rethrow;
     }
   }

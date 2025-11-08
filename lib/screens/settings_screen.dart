@@ -7,10 +7,10 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
   bool _notificationReminders = true;
   bool _emailUpdates = true;
 
@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Card(
                 child: Padding(
@@ -69,7 +69,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             radius: 30,
                             backgroundColor: Color(0xFFF5C841),
                             child: Text(
-                              authProvider.user?.name?.substring(0, 1).toUpperCase() ?? 'U',
+                              authProvider.user?.name.substring(0, 1).toUpperCase() ?? 'U',
                               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                             ),
                           ),
@@ -173,7 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: Color(0xFFF5C841),
+        activeThumbColor: Color(0xFFF5C841),
         activeTrackColor: Color(0xFF0E0E2C),
         inactiveThumbColor: Colors.grey,
         inactiveTrackColor: Colors.grey[300],

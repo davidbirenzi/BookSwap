@@ -12,13 +12,13 @@ class ChatDetailScreen extends StatefulWidget {
   const ChatDetailScreen({super.key, required this.swap});
 
   @override
-  _ChatDetailScreenState createState() => _ChatDetailScreenState();
+  ChatDetailScreenState createState() => ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class ChatDetailScreenState extends State<ChatDetailScreen> {
   final _messageController = TextEditingController();
   final DatabaseService _databaseService = DatabaseService();
-  final Uuid _uuid = Uuid();
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -81,7 +81,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           ],
         ),
         actions: [
-          if (!isSender && widget.swap.status == SwapStatus.Pending)
+          if (!isSender && widget.swap.status == SwapStatus.pending)
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert, color: Colors.white),
               onSelected: (value) => _updateSwapStatus(SwapStatus.values.firstWhere((s) => s.name == value)),
@@ -172,7 +172,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withValues(alpha: 0.1),
                                       blurRadius: 4,
                                       offset: Offset(0, 2),
                                     ),
@@ -193,7 +193,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                       '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: isMe ? Color(0xFF0E0E2C).withOpacity(0.7) : Colors.white70,
+                                        color: isMe ? Color(0xFF0E0E2C).withValues(alpha: 0.7) : Colors.white70,
                                       ),
                                     ),
                                   ],
@@ -215,7 +215,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               color: Color(0xFF0E0E2C),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: Offset(0, -2),
                 ),
@@ -228,7 +228,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: Offset(0, 2),
                   ),
@@ -321,8 +321,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   void _updateSwapStatus(SwapStatus status) async {
     await _databaseService.updateSwapStatus(widget.swap.id, status);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Swap ${status.name.toLowerCase()}')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Swap ${status.name.toLowerCase()}')),
+      );
+    }
   }
 }

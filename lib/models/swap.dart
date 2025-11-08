@@ -1,4 +1,4 @@
-enum SwapStatus { Pending, Accepted, Rejected }
+enum SwapStatus { pending, accepted, rejected }
 
 class Swap {
   final String id;

@@ -11,10 +11,10 @@ class MyListingsScreen extends StatefulWidget {
   const MyListingsScreen({super.key});
 
   @override
-  _MyListingsScreenState createState() => _MyListingsScreenState();
+  MyListingsScreenState createState() => MyListingsScreenState();
 }
 
-class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerProviderStateMixin {
+class MyListingsScreenState extends State<MyListingsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final DatabaseService _databaseService = DatabaseService();
 
@@ -190,17 +190,17 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
                     Text('From: ${swap.senderName}'),
                     Text('Status: ${swap.status.name}', 
                       style: TextStyle(color: _getStatusColor(swap.status))),
-                    if (swap.status == SwapStatus.Pending) ...[
+                    if (swap.status == SwapStatus.pending) ...[
                       SizedBox(height: 8),
                       Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.Accepted),
+                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.accepted),
                             child: Text('Accept'),
                           ),
                           SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.Rejected),
+                            onPressed: () => _updateSwapStatus(swap.id, SwapStatus.rejected),
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                             child: Text('Reject', style: TextStyle(color: Colors.white)),
                           ),
@@ -219,20 +219,22 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
 
   Color _getStatusColor(SwapStatus status) {
     switch (status) {
-      case SwapStatus.Pending:
+      case SwapStatus.pending:
         return Colors.orange;
-      case SwapStatus.Accepted:
+      case SwapStatus.accepted:
         return Colors.green;
-      case SwapStatus.Rejected:
+      case SwapStatus.rejected:
         return Colors.red;
     }
   }
 
   void _updateSwapStatus(String swapId, SwapStatus status) async {
     await _databaseService.updateSwapStatus(swapId, status);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Swap ${status.name.toLowerCase()}')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Swap ${status.name.toLowerCase()}')),
+      );
+    }
   }
 
   void _editBook(BuildContext context, Book book) {
@@ -254,9 +256,11 @@ class _MyListingsScreenState extends State<MyListingsScreen> with SingleTickerPr
     
     if (confirm == true) {
       await _databaseService.deleteBook(bookId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Book deleted')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Book deleted')),
+        );
+      }
     }
   }
 }

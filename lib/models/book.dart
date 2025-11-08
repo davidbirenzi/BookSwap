@@ -1,4 +1,4 @@
-enum BookCondition { New, LikeNew, Good, Used }
+enum BookCondition { newCondition, likeNew, good, used }
 
 class Book {
   final String id;

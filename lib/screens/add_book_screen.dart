@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+
 import 'dart:convert';
 import 'dart:typed_data';
 import '../models/book.dart';
@@ -14,16 +14,16 @@ class AddBookScreen extends StatefulWidget {
   const AddBookScreen({super.key, this.book});
 
   @override
-  _AddBookScreenState createState() => _AddBookScreenState();
+  AddBookScreenState createState() => AddBookScreenState();
 }
 
-class _AddBookScreenState extends State<AddBookScreen> {
+class AddBookScreenState extends State<AddBookScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _authorController = TextEditingController();
   final DatabaseService _databaseService = DatabaseService();
   
-  BookCondition _selectedCondition = BookCondition.Good;
+  BookCondition _selectedCondition = BookCondition.good;
   Uint8List? _imageBytes;
   String? _base64Image;
   bool _isLoading = false;
@@ -102,14 +102,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
               Text('Condition', style: TextStyle(color: Colors.black, fontSize: 16)),
               SizedBox(height: 8),
               ...BookCondition.values.map((condition) {
-                return RadioListTile<BookCondition>(
+                return ListTile(
                   title: Text(condition.name, style: TextStyle(color: Colors.black)),
-                  value: condition,
-                  groupValue: _selectedCondition,
-                  onChanged: (value) => setState(() => _selectedCondition = value!),
-                  activeColor: Color(0xFFF5C841),
+                  leading: Radio<BookCondition>(
+                    value: condition,
+                    groupValue: _selectedCondition,
+                    onChanged: (value) => setState(() => _selectedCondition = value!),
+                    activeColor: Color(0xFFF5C841),
+                  ),
+                  onTap: () => setState(() => _selectedCondition = condition),
                 );
-              }).toList(),
+              }),
               SizedBox(height: 24),
               _isLoading
                   ? CircularProgressIndicator()
@@ -181,14 +184,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
           _base64Image = base64String;
         });
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Image selected successfully!')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Image selected successfully!')),
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error selecting image: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error selecting image: $e')),
+        );
+      }
     }
   }
 
@@ -208,7 +215,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
       String imageUrl = '';
       if (_base64Image != null && _base64Image!.isNotEmpty) {
         imageUrl = 'data:image/jpeg;base64,$_base64Image';
-      } else if (widget.book?.imageUrl?.isNotEmpty == true) {
+      } else if (widget.book != null && widget.book!.imageUrl.isNotEmpty) {
         imageUrl = widget.book!.imageUrl;
       }
       
