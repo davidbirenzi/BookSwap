@@ -43,3 +43,30 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase related - protect sensitive configuration
+# Keep google-services.json in version control but be careful with keys
+# Uncomment the line below if you want to exclude Firebase config files
+# **/google-services.json
+# **/GoogleService-Info.plist
+# firebase_options.dart should be included as it's generated
+
+# Environment files that might contain secrets
+.env
+.env.local
+.env.production
+.env.staging
+
+# Local Firebase emulator data
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Additional Flutter/Dart ignores
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# IDE specific
+.vscode/settings.json
+.vscode/launch.json
