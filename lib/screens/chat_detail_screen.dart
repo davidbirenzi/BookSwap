@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
+
 import '../models/swap.dart';
 import '../models/message.dart';
 import '../services/database_service.dart';

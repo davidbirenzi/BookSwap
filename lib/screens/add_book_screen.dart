@@ -102,15 +102,27 @@ class AddBookScreenState extends State<AddBookScreen> {
               Text('Condition', style: TextStyle(color: Colors.black, fontSize: 16)),
               SizedBox(height: 8),
               ...BookCondition.values.map((condition) {
-                return ListTile(
-                  title: Text(condition.name, style: TextStyle(color: Colors.black)),
-                  leading: Radio<BookCondition>(
-                    value: condition,
-                    groupValue: _selectedCondition,
-                    onChanged: (value) => setState(() => _selectedCondition = value!),
-                    activeColor: Color(0xFFF5C841),
-                  ),
+                return GestureDetector(
                   onTap: () => setState(() => _selectedCondition = condition),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    margin: EdgeInsets.symmetric(vertical: 2),
+                    decoration: BoxDecoration(
+                      color: _selectedCondition == condition ? Color(0xFFF5C841) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _selectedCondition == condition ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                          color: _selectedCondition == condition ? Colors.black : Colors.grey,
+                        ),
+                        SizedBox(width: 8),
+                        Text(condition.name, style: TextStyle(color: Colors.black)),
+                      ],
+                    ),
+                  ),
                 );
               }),
               SizedBox(height: 24),
