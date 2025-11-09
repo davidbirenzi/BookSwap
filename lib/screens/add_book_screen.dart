@@ -25,7 +25,7 @@ class AddBookScreenState extends State<AddBookScreen> {
   final _authorController = TextEditingController(); // author input
   final DatabaseService _databaseService = DatabaseService();
   
-  BookCondition _selectedCondition = BookCondition.good; // default condition
+  BookCondition _selectedCondition = BookCondition.brandNew; // default condition
   Uint8List? _imageBytes; // raw image data for preview
   String? _base64Image; // base64 string to store in database
   bool _isLoading = false; // tracks save operation

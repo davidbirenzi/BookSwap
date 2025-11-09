@@ -1,5 +1,5 @@
 // Different conditions a textbook can be in
-enum BookCondition { newCondition, likeNew, good, used }
+enum BookCondition { brandNew, likeNew, good, used }
 
 // Book model - represents a textbook listing
 class Book {

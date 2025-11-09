@@ -87,18 +87,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                                   authProvider.user?.email ?? 'No email',
                                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                                 ),
-                                SizedBox(height: 4),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: authProvider.user?.emailVerified == true ? Colors.green : Colors.orange,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    authProvider.user?.emailVerified == true ? 'Verified' : 'Not Verified',
-                                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
                               ],
                             ),
                           ),
